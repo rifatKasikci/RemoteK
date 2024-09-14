@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+</head>
+
+<body>
+  <div class="w-100 text-center mt-5 mb-5" style="height: 80px;">
+    <img class="mb-4 rounded-circle" src="../assets/rk-logo.png" alt="" width="100" height="100">
+  </div>
+  <div class="container text-center">
+    <h1 class="mb-4">Welcome RemoteK Desktop!</h1>
+    <p class="mb-4">You are now logged in.</p>
+    <p class="mb-4">Wait for commands!</p>
+    <button id="logout-btn" class="btn btn-danger logout-btn">Logout</button>
+  </div>
+  <script>
+    const { ipcRenderer } = require('electron');
+    const token = localStorage.getItem('token');
+    if (token === null) {
+      ipcRenderer.send('logout');
+    } else {
+      ipcRenderer.send('send-token-to-main', token);
+    }
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      ipcRenderer.send('logout');
+    });
+  </script>
+  <script src="../src/scripts/bootstrap-loader.js"></script>
+</body>
+
+</html>

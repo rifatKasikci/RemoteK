@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+
+<body class="w-100 d-flex justify-content-center py-5">
+    <main class="w-50" style="max-width: 410px;">
+        <div class="w-100 text-center">
+          <img class="mb-4 rounded-circle" src="../assets/rk-logo.png" alt="" width="100" height="100">
+        </div>
+        <h1 class="h3 mb-3 fw-normal text-center">Login</h1>
+        <form class="d-flex flex-column justify-content-center w-100">
+          <div class="input-group mb-3 w-100">
+            <input type="text" id="email" class="form-control" placeholder="Email" aria-label="example@example.com"
+              aria-describedby="basic-addon2">
+          </div>
+          <div class="input-group mb-3">
+            <input type="password" id="password" class="form-control" placeholder="Password" aria-label="Password"
+              aria-describedby="basic-addon2">
+          </div>
+          <button class="btn btn-primary w-100 py-2" id="login-btn" type="button">Login</button>
+          <p class="mt-5 mb-3 text-body-secondary" id="error-message"></p>
+          <a href="register.html">Register</a>
+        </form>
+      </main>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+        const loginBtn = document.getElementById('login-btn');
+        const errorMessage = document.getElementById('error-message');
+
+        loginBtn.addEventListener('click', () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            ipcRenderer.send('login', { email, password });
+
+            ipcRenderer.on('login-success', (event, token) => {
+                localStorage.setItem('token', token);
+                console.log('Token saved to localStorage:', token);
+            });
+
+            ipcRenderer.once('login-failed', (event, message) => {
+                errorMessage.textContent = message;
+            });
+        });
+    </script>
+    <script src="../src/scripts/bootstrap-loader.js"></script>
+</body>
+
+</html>

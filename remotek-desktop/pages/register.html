@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+</head>
+
+<body class="w-100 d-flex justify-content-center py-5">
+  <main>
+    <div class="w-100 text-center">
+      <img class="mb-4 rounded-circle" src="../assets/rk-logo.png" alt="" width="100" height="100">
+    </div>
+    <h1 class="h3 mb-3 fw-normal text-center">Register</h1>
+    <form class="d-flex flex-column justify-content-center w-100">
+
+      <div class="input-group mb-3">
+        <input type="text" id="firstName" class="form-control" placeholder="First Name" aria-label="FirstName">
+        <input type="text" id="lastName" class="form-control" placeholder="Last Name" aria-label="LastName">
+      </div>
+
+      <div class="input-group mb-3">
+        <input type="text" id="email" class="form-control" placeholder="Email" aria-label="example@example.com"
+          aria-describedby="basic-addon2">
+      </div>
+
+      <div class="input-group mb-3">
+        <input type="password" id="password" class="form-control" placeholder="Password" aria-label="Password"
+          aria-describedby="basic-addon2">
+      </div>
+
+      <div class="input-group mb-3">
+        <input type="password" id="passwordRepeat" class="form-control" placeholder="Password Repeat" aria-label="PasswordRepeat"
+          aria-describedby="basic-addon2">
+      </div>
+      <button class="btn btn-primary w-100 py-2" id="register-btn" type="button">Register</button>
+      <p class="mt-5 mb-3 text-body-secondary" id="error-message"></p>
+      <a href="login.html">Login</a>
+    </form>
+  </main>
+  <script>
+    const { ipcRenderer } = require('electron');
+    document.getElementById('register-btn').addEventListener('click', () => {
+      
+
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const passwordRepeat = document.getElementById('passwordRepeat').value;
+
+      if (password !== passwordRepeat) {
+        document.getElementById('error-message').textContent = 'Passwords do not match!';
+        return;
+      }
+
+      const user = { firstName, lastName, email, password };
+      ipcRenderer.send('register', user);
+
+      ipcRenderer.on('register-success', (event,token) => {
+        localStorage.setItem('token', token);
+      });
+
+      ipcRenderer.on('register-failed', (event, message) => {
+        document.getElementById('error-message').textContent = message;
+      });
+    });
+  </script>
+  <script src="../src/scripts/bootstrap-loader.js"></script>
+</body>
+
+</html>
